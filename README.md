@@ -13,22 +13,25 @@ This repository contains the codebase for a metaheuristics project aimed at solv
     phase8[Write the Iterated Greedy algorithm.]
     phase9[Write the Genetic Algorithm.]
     phase10[Testing]
+    phase1 --- phase2
+    phase3 --- phase4
+    phase3 --- phase5
+    phase3 --- phase6
+    phase4 --- phase5
+    phase4 --- phase6
+    phase5 --- phase6
+    phase8 --- phase9
     phase1 --> phase3
     phase2 --> phase3
     phase2 --> phase4
     phase2 --> phase5
     phase2 --> phase6
-    phase2 --> phase7
     phase5 --> phase7
     phase6 --> phase7
-    phase2 --> phase8
     phase4 --> phase8
-    phase5 --> phase8
-    phase6 --> phase8
     phase7 --> phase8
-    phase2 --> phase9
     phase5 --> phase9
+    phase3 --> phase10
     phase8 --> phase10
     phase9 --> phase10
-
 ```
