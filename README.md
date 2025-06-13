@@ -3,29 +3,21 @@ This repository contains the codebase for a metaheuristics project aimed at solv
 
 ```mermaid
   flowchart TB
-    phase1[Python script to generate instances as JSONs, it won't be on this repository.]
-    phase2[Create the abstractions for better data visualization: class Instance, Solution, etc.]
-    phase3[JSON reader using the Nlohmann header.]
-    phase4[Write the greedy and the known optimum algorithm for solving the problem.]
-    phase5[Neighbor generation methods.]
-    phase6[Create the soft constraint's effect on the solution.]
-    phase7[Write the Local Search algorithm.]
-    phase8[Write the Iterated Greedy algorithm.]
-    phase9[Write the Genetic Algorithm.]
-    phase10[Testing]
-    phase1 --- phase2
-    phase3 --- phase4
-    phase3 --- phase5
-    phase3 --- phase6
-    phase4 --- phase5
-    phase4 --- phase6
-    phase5 --- phase6
-    phase8 --- phase9
+    phase1{{Script to generate JSON instances, won't be on the repo.}}
+    phase2{{Abstractions for better visualization.}}
+    phase3{{JSON reader.}}
+    phase4{{Greedy and the known optimum algorithms.}}
+    phase5{{Neighbor generation methods.}}
+    phase6{{Soft constraint's effect on the solution.}}
+    phase7{{Local Search algorithm.}}
+    phase8{{Iterated Greedy algorithm.}}
+    phase9{{Genetic Algorithm.}}
+    phase10{Testing.}
     phase1 --> phase3
     phase2 --> phase3
     phase2 --> phase4
-    phase2 --> phase5
     phase2 --> phase6
+    phase2 --> phase5
     phase5 --> phase7
     phase6 --> phase7
     phase4 --> phase8
