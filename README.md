@@ -1,6 +1,7 @@
 # seminario3_inf284
 This repository contains the codebase for a metaheuristics project aimed at solving the market partitioning problem in machines. It explores optimization techniques to effectively divide markets among available machines.
 
+## To do graph:
 ```mermaid
   flowchart TB
     phase1{{Script to generate JSON instances, won't be on the repo.}}
@@ -27,3 +28,7 @@ This repository contains the codebase for a metaheuristics project aimed at solv
     phase8 --> phase10
     phase9 --> phase10
 ```
+
+## Setup:
+After cloning the repository, go to the repository directory. Write the commands ```mkdir build && cd build && cmake ..```. If everything works correctly, you can compile it with ```make -j4``` (the number should be number of cores in your computer).
+If you need help in the execution, run ```./sem3 --h```.
