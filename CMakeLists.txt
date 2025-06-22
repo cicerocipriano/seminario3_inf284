@@ -11,11 +11,18 @@ if(ipo_supported)
  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION True)
 endif()
 
-#set(HEADERS)
+set(HEADERS src/json.hpp
+            src/market.h
+            src/computer.h
+            src/solution.h
+            )
 
-set(SOURCES src/main.cpp)
+set(SOURCES src/main.cpp
+            src/market.cpp
+            src/computer.cpp
+            src/solution.cpp)
 
 set(PROJECT_NAME "sem3")
 
 project(${PROJECT_NAME} LANGUAGES CXX)
-add_EXECUTABLE(${PROJECT_NAME} ${SOURCES})
+add_EXECUTABLE(${PROJECT_NAME} ${HEADERS} ${SOURCES})
