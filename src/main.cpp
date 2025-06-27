@@ -1,3 +1,6 @@
-#include "solution.h"
+#include "algorithms.h"
 
-int main(){return 0;}
+int main(){
+    algo();
+    return 0;
+}

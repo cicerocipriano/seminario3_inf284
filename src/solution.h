@@ -2,29 +2,23 @@
 #define SOLUTION_H
 
 #include "computer.h"
-#include <unordered_map>
 
 using ul = unsigned long;
 using ld = long double;
 
 struct solution{
-    // constructors
     solution();
-
-    // destructor
     ~solution();
 
-    // methods
-    inline void print(nlohmann::json &) const;
-    inline void print_raw() const;
-    inline ld calc_mean();
-    inline ld calc_variance();
-    inline ld calc_std_deviation();
+    inline void print() const;
+    inline void calc_mean();
+    inline void calc_variance();
+    inline void calc_std_deviation();
+    inline void evaluation();
+    inline ld partial_eval() const;
 
-    // attributes
     std::unordered_map<ul, computer> _computers;
-    ld _mean, _variance, _std_deviation;
-
+    ld _mean, _variance, _std_deviation, _value;
 };  
 
 #endif // SOLUTION_H

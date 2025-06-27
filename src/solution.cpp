@@ -6,35 +6,40 @@ using ul = unsigned long;
 using ld = long double;
 using namespace std;
 
-solution::solution(): _mean(0.0), _variance(0.0), _std_deviation(0.0) {}
+solution::solution(): _mean(0.0), _variance(0.0), _std_deviation(0.0), _value(0.0) {}
 
 solution::~solution(){}
 
-void solution::print(nlohmann::json &j) const {}
-
-void solution::print_raw() const {
+void solution::print() const {
     for (const auto &i : this->_computers)
-        i.second.print_raw();
-    printf("Number of computers: %lu\n", this->_computers.size());
-    printf("Mean: %.2Lf\n", this->_mean);
-    printf("Variance: %.2Lf\n", this->_variance);
-    printf("Standard Deviation: %.2Lf\n", this->_std_deviation);   
+        i.second.print();
+    printf("Number of computers: %lu\nMean: %.5Lf\nVariance: %.5Lf\nStandard Deviation: %.5Lf\nSolution Value: %.5Lf\n", this->_computers.size(), this->_mean, this->_variance, this->_std_deviation, this->_value);
 }
 
-ld solution::calc_mean() {
-    if(this->_computers.empty()) return 0.0;
+void solution::calc_mean() {
     ld sum = 0.0;
     for (const auto &i : this->_computers)
         sum += i.second._events_sum;
     this->_mean = sum / this->_computers.size();
-    return this->_mean;
 }
 
-ld solution::calc_variance() {
-    return this->_variance;
+void solution::calc_variance() {
+    ld sum = 0.0;
+    for (const auto &i : this->_computers)
+        sum += pow(i.second._events_sum - this->_mean, 2);
+    this->_variance = sum / this->_computers.size();
 }
 
-ld solution::calc_std_deviation() {
-    return this->_std_deviation;
+void solution::calc_std_deviation() {this->_std_deviation = sqrt(this->_variance);}
+
+void solution::evaluation(){
+    if(this->_computers.empty()){
+        this->_mean = this->_variance = this->_std_deviation = this->_value = -1.0;
+        return;
+    }
+    this->calc_mean(), this->calc_variance(), this->calc_std_deviation(), this->_value = this->_std_deviation;
 }
 
+ld solution::partial_eval() const {
+    return 0.0;
+}

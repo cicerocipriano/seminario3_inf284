@@ -6,18 +6,12 @@
 using ul = unsigned long;
 
 struct market{
-    // constructors
     market(const ul, const ul, const ul);
-
-    // destructor
     ~market();
 
-    // methods
-    inline void print(nlohmann::json &) const;
-    inline void print_raw() const;
+    inline void print() const;
 
-    // attributes
-    ul _events_avg, _market_id, _exchange_id;
+    ul _events_avg, _exchange_id, _market_id;
 };
 
 #endif // SOLUTION_H
