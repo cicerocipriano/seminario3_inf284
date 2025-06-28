@@ -18,11 +18,7 @@ set(HEADERS src/json.hpp
             src/instance.h
             src/algorithms.h)
 
-set(SOURCES src/main.cpp
-            src/market.cpp
-            src/computer.cpp
-            src/solution.cpp
-            src/instance.cpp)
+set(SOURCES src/main.cpp)
 
 set(PROJECT_NAME "sem3")
 

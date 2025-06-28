@@ -1,6 +1,11 @@
 #include "algorithms.h"
 
-int main(){
-    algo();
+using ul = unsigned long;
+using ld = long double;
+using namespace std;
+
+int main(int argc, char **argv) {
+    instance inst(stoul(argv[argc - 2]));
+    inst.read_input(argv[argc - 1]);
     return 0;
 }
