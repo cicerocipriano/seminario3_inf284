@@ -6,7 +6,8 @@
 using ul = unsigned long;
 
 struct computer{
-    inline computer(): _events_sum(0) {};
+    inline computer() : _events_sum(0) {};
+    inline computer(const ul n_exchanges): _events_sum(0) {this->_constraint_count.resize(n_exchanges, 0);};
     
     inline ~computer(){};
 
@@ -24,7 +25,10 @@ struct computer{
         return sum;
     };
 
+    inline void gen_cc(std::unordered_map<ul, ul> &cc){this->_constraint_count.resize(cc.size(), 0);};
+
     std::vector<market> _markets;
+    std::vector<ul> _constraint_count;
     ul _events_sum;
 };
 
