@@ -7,7 +7,7 @@ This repository contains the codebase for a metaheuristics project aimed at solv
     phase1{{Script to generate JSON instances, won't be on the repo.}}
     phase2{{Abstractions for better visualization.}}
     phase3{{JSON reader.}}
-    phase4{{Greedy and the known optimum algorithms.}}
+    phase4{{Greedy algorithm.}}
     phase5{{Neighbor generation methods.}}
     phase6{{Soft constraint's effect on the solution.}}
     phase7{{Local Search algorithm.}}
