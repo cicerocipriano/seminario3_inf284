@@ -13,11 +13,6 @@ using ld = long double;
 std::mt19937_64 eng{std::random_device{}()};
 std::uniform_int_distribution<ul> dist{0, std::numeric_limits<ul>::max()};
 
-struct change{
-    ul change_type, from, to, who;
-    std::vector<std::pair<ul, ul>> computer_sequence;
-};
-
 inline change gen_change(solution& sol){
     change c;
     c.change_type = dist(eng) % sol._computers.size();
@@ -39,7 +34,7 @@ inline change gen_change(solution& sol){
         }
         while(!used.empty())
             c.computer_sequence.push_back({*used.begin(), 0}), used.erase(used.begin());
-        for(auto &i : c.computer_sequence)
+        for(std::pair<ul, ul> &i : c.computer_sequence)
             i.second = dist(eng) % sol._computers.at(i.first)._markets.size();
     }
     return c;
@@ -50,9 +45,8 @@ inline void initial_greedy(instance &inst, solution &sol) {
     std::list<market> v(inst._markets.begin(), inst._markets.end());
     ul idx = 0;
     computer c(0);
-    bool found = false, (*cmp)(const computer &, const computer &) = [](const computer &a, const computer &b){return a._events_sum > b._events_sum;};
-    
-    std::priority_queue<computer, std::vector<computer>, decltype(cmp)> min_heap(cmp);
+    bool found = false, (*compare)(const computer &, const computer &) = [](const computer &a, const computer &b){return a._events_sum > b._events_sum;};
+    std::priority_queue<computer, std::vector<computer>, decltype(compare)> min_heap(compare);
     for (ul i = 0; i < inst._k; ++i)
         min_heap.push({inst._n_exchanges});
     while(!v.empty()){
@@ -66,14 +60,58 @@ inline void initial_greedy(instance &inst, solution &sol) {
         if(!found) printf("No more markets can be added. This solution is invalid.\n"), exit(EXIT_FAILURE);
         min_heap.push(c);
     }
-    while(!min_heap.empty()){
-        sol._computers.insert({idx++, min_heap.top()});
-        min_heap.pop();
-    }
+    while(!min_heap.empty())
+        sol._computers.insert({idx++, min_heap.top()}), min_heap.pop();
     sol.evaluation();
 };
 
-inline void reconstruct_greedy(solution &sol){
-    sol.calc_mean();
+inline void reconstruct_greedy(solution &sol, instance &inst) {
+    std::vector<market> markets;
+    std::unordered_set<ul> affected_computers;
+    ul num_k = dist(eng) % sol._computers.size() + 1, chosen_computer, start, end;
+    std::pair<ul, computer> p;
+
+    while(affected_computers.size() != num_k){
+        chosen_computer = dist(eng) % sol._computers.size();
+        if(affected_computers.find(chosen_computer) == affected_computers.end()) affected_computers.insert(chosen_computer);
+    }
+
+    for(ul i : affected_computers){
+        end = dist(eng) % sol._computers.at(i)._markets.size();
+        if(end == 0) end = sol._computers.at(i)._markets.size() - 1;
+        start = dist(eng) % (sol._computers.at(i)._markets.size() - end);
+        for(std::vector<market>::iterator j = sol._computers.at(i)._markets.begin() + start; j != sol._computers.at(i)._markets.begin() + start + end; j++){
+            markets.push_back(*j);
+            sol._computers.at(i)._events_sum -= j->_events_avg;
+            sol._computers.at(i)._constraint_count[j->_exchange_id]--;
+        }
+        sol._computers.at(i)._markets.erase(sol._computers.at(i)._markets.begin() + start, sol._computers.at(i)._markets.begin() + start + end);
+    }
+
+    std::sort(markets.begin(), markets.end(), [](const market &a, const market &b) {return a._events_avg > b._events_avg;});
+    std::list<market> markets_list(markets.begin(), markets.end());
+
+    bool found = false, (*compare)(const std::pair<ul, computer> &, const std::pair<ul, computer> &) = [](const std::pair<ul, computer> &a, const std::pair<ul, computer> &b){return a.second._events_sum > b.second._events_sum;};
+    std::priority_queue<std::pair<ul, computer>, std::vector<std::pair<ul, computer>>, decltype(compare)> min_heap(compare);
+    for (const std::pair<ul, computer> i : sol._computers)
+        min_heap.push(i);
+    while(!markets_list.empty()){
+        p = min_heap.top(), min_heap.pop(), found = false;
+        for (std::list<market>::iterator it = markets_list.begin(); it != markets_list.end(); ++it) {
+            if (p.second._constraint_count[it->_exchange_id] < inst._hard_constraints[it->_exchange_id]) {
+                p.second._markets.push_back(*it), p.second._events_sum += it->_events_avg, p.second._constraint_count[it->_exchange_id]++, markets_list.erase(it), found = true;
+                break;
+            }
+        }
+        if(!found) printf("No more markets can be added. This solution is invalid.\n"), exit(EXIT_FAILURE);
+        min_heap.push(p);
+    }
+    while(!min_heap.empty())
+        p = min_heap.top(), min_heap.pop(), sol._computers.at(p.first) = p.second;
+    sol.evaluation();
 };
 
+inline void local_search(solution &sol, instance &inst) {
+};
+
+inline void iterated_greedy(instance &inst, solution &sol){};

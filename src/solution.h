@@ -6,6 +6,11 @@
 using ul = unsigned long;
 using ld = long double;
 
+struct change{
+    ul change_type, from, to, who;
+    std::vector<std::pair<ul, ul>> computer_sequence;
+};
+
 struct solution{
     inline solution(): _mean(0.0), _variance(0.0), _std_deviation(0.0), _value(0.0) {};
 
@@ -16,6 +21,15 @@ struct solution{
             i.second.print();
         printf("Number of computers: %lu\nMean: %.5Lf\nVariance: %.5Lf\nStandard Deviation: %.5Lf\nSolution Value: %.5Lf\n", this->_computers.size(), this->_mean, this->_variance, this->_std_deviation, this->_value);
     };
+
+    inline ul markets_in_solution() const{
+        ul sum = 0;
+        for (const auto &i : this->_computers)
+            sum += i.second._markets.size();
+        return sum;
+    };
+
+    inline void apply_change(const change c){};
 
     inline void calc_mean(){
         ld sum = 0.0;
@@ -41,7 +55,7 @@ struct solution{
         this->calc_mean(), this->calc_variance(), this->calc_std_deviation(), this->_value = this->_std_deviation;
     };
 
-    inline ld partial_eval() const{return 0.0;};
+    inline ld partial_eval(const change c) const{return 0.0;};
 
     std::unordered_map<ul, computer> _computers;
     ld _mean, _variance, _std_deviation, _value;
