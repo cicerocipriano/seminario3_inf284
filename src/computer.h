@@ -14,7 +14,7 @@ struct computer {
   inline ~computer(){};
 
   inline void print() const {
-    for (auto &i : this->_markets)
+    for (const market &i : this->_markets)
       i.print();
     printf("Sum of events: %lu\nNumber of markets: %lu\n", this->_events_sum,
            this->_markets.size());
@@ -23,18 +23,25 @@ struct computer {
   inline ul calc_sum() {
     ul sum = 0;
 
-    //Mude se der errado
-   
-    for (auto &i : this->_markets)
+    // Mude se der errado
+
+    for (const market &i : this->_markets)
       sum += i._events_avg;
-      
+
     this->_events_sum = sum;
-    this->_events_sum_square = pow(sum,2) ;
+    this->_events_sum_square = pow(sum, 2);
     return sum;
   };
 
   inline void gen_cc(std::unordered_map<ul, ul> &cc) {
     this->_constraint_count.resize(cc.size(), 0);
+  };
+
+  inline bool check_computer(std::vector<ul> &hard_constraints) const {
+    for (ul i = 0; i < this->_constraint_count.size(); ++i)
+      if (this->_constraint_count[i] > hard_constraints[i])
+        return false;
+    return true;
   };
 
   std::vector<market> _markets;

@@ -10,7 +10,7 @@
 using ul = unsigned long;
 using ld = long double;
 
-constexpr ul ITERATIONS_LOCAL_SEARCH = 100;
+constexpr ul ITERATIONS_LOCAL_SEARCH = 10000;
 constexpr ul ITERATIONS_ITERATED_GREEDY = 100;
 
 std::mt19937_64 eng{std::random_device{}()};
@@ -152,23 +152,31 @@ inline void reconstruct_greedy(solution &sol, instance &inst) {
   sol.evaluation();
 };
 
-inline void local_search(solution &sol, instance &inst) {
+inline void local_search(solution &sol) {
+  change c;
+  ld new_value;
   for (ul i = 0; i < ITERATIONS_LOCAL_SEARCH; ++i) {
-    change c = gen_change(sol);
-    ld new_value = sol.partial_eval(c);
+    c = gen_change(sol), new_value = sol.partial_eval(c);
     if (new_value < sol._value) {
-      sol.apply_change(c, new_value);
+      sol.apply_change(c, new_value),
+          printf("Found a better solution in the local search\n");
       return;
     }
   }
+  printf("No better solution found in local search.\n");
 };
 
 inline void iterated_greedy(instance &inst, solution &sol) {
+  std::vector<ul> hard_constraints(inst._n_exchanges);
+  ul aux = 0;
+  for (std::pair<ul, ul> i : inst._hard_constraints)
+    hard_constraints[i.first] = i.second;
   initial_greedy(inst, sol);
-  for (ul i = 0; i < ITERATIONS_ITERATED_GREEDY; ++i) {
-    local_search(sol, inst);
-    reconstruct_greedy(sol, inst);
-  }
+  do {
+    for (ul i = 0; i < ITERATIONS_ITERATED_GREEDY; ++i)
+      local_search(sol), reconstruct_greedy(sol, inst);
+    local_search(sol), printf("Iteration %lu:\n", aux++);
+  } while (!sol.check_validity(hard_constraints));
   printf("Final solution:\n");
-  sol.print();
+  sol.print(false);
 };
