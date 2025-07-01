@@ -1,18 +1,18 @@
 {
   "binance": {
-    "BTC/USDT": 10123,
-    "ETH/USDT": 10011,
+    "BTC/USDT": 161523,
+    "ETH/USDT": 100181,
     "BNB/USDT": 8802,
     "ADA/USDT": 8327,
-    "XRP/USDT": 9081,
+    "XRP/USDT": 79081,
     "SOL/USDT": 9897,
-    "DOGE/USDT": 9812,
+    "DOGE/USDT": 19812,
     "TRX/USDT": 4761,
     "DOT/USDT": 6299,
     "MATIC/USDT": 7281,
-    "LTC/USDT": 7123,
+    "LTC/USDT": 17123,
     "AVAX/USDT": 6547,
-    "SHIB/USDT": 4921,
+    "SHIB/USDT": 9921,
     "LINK/USDT": 5839,
     "ATOM/USDT": 4783,
     "FIL/USDT": 3697,
@@ -61,8 +61,8 @@
     "LIT/USDT": 2167
   },
   "deribit": {
-    "BTC-PERPETUAL": 5131,
-    "ETH-PERPETUAL": 4897,
+    "BTC-PERPETUAL": 105131,
+    "ETH-PERPETUAL": 74897,
     "BTC-USD-PERPETUAL": 8771,
     "ETH-USD-PERPETUAL": 8461,
     "BTC-25JUN25-30000-C": 1349,
@@ -119,7 +119,7 @@
     "ETH-USD-RATIO": 23
   },
   "okx": {
-    "BTC-USDT-SWAP": 10237,
+    "BTC-USDT-SWAP": 100237,
     "ETH-USDT-SWAP": 9873,
     "BTC-USD-SWAP": 8769,
     "ETH-USD-SWAP": 8457,

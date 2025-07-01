@@ -1,7 +1,6 @@
 #include "Genetic.h"
 #include <iostream>
 
-
 using ul = unsigned long;
 using ld = long double;
 using namespace std;
@@ -15,11 +14,7 @@ int main(int argc, char **argv) {
 
   cout << "Genetico" << endl;
   solution sol;
-  cout << "Executando" << endl;
-  initial_greedy(inst, sol);
-  
-  sol.print();
-  cout << "Fim" << endl;
+  iterated_greedy(inst, sol);
   return 0;
 
 }

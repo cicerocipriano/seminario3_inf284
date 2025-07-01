@@ -7,6 +7,7 @@ using ul = unsigned long;
 
 struct computer {
   inline computer() : _events_sum(0){};
+
   inline computer(const ul n_exchanges) : _events_sum(0) {
     this->_constraint_count.resize(n_exchanges, 0);
   };
@@ -14,7 +15,7 @@ struct computer {
   inline ~computer(){};
 
   inline void print() const {
-    for (auto &i : this->_markets)
+    for (const market &i : this->_markets)
       i.print();
     printf("Sum of events: %lu\nNumber of markets: %lu\n", this->_events_sum,
            this->_markets.size());
@@ -22,14 +23,9 @@ struct computer {
 
   inline ul calc_sum() {
     ul sum = 0;
-
-    //Mude se der errado
-   
-    for (auto &i : this->_markets)
+    for (const market &i : this->_markets)
       sum += i._events_avg;
-      
-    this->_events_sum = sum;
-    this->_events_sum_square = pow(sum,2) ;
+    this->_events_sum = sum, this->_events_sum_square = pow(sum, 2);
     return sum;
   };
 
@@ -37,10 +33,16 @@ struct computer {
     this->_constraint_count.resize(cc.size(), 0);
   };
 
+  inline bool check_computer(std::vector<ul> &hard_constraints) const {
+    for (ul i = 0; i < this->_constraint_count.size(); ++i)
+      if (this->_constraint_count[i] > hard_constraints[i])
+        return false;
+    return true;
+  };
+
   std::vector<market> _markets;
   std::vector<ul> _constraint_count;
-  ul _events_sum;
-  ul _events_sum_square;
+  ul _events_sum, _events_sum_square;
 };
 
 #endif // COMPUTER_H
