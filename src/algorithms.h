@@ -1,7 +1,6 @@
 #include "computer.h"
 #include "instance.h"
 #include "solution.h"
-#include <limits>
 #include <list>
 #include <queue>
 #include <random>
@@ -12,6 +11,7 @@ using ld = long double;
 
 constexpr ul ITERATIONS_LOCAL_SEARCH = 10000;
 constexpr ul ITERATIONS_ITERATED_GREEDY = 100;
+constexpr ul ITERATIONS = 2;
 
 std::mt19937_64 eng{std::random_device{}()};
 std::uniform_int_distribution<ul> dist{0, std::numeric_limits<ul>::max()};
@@ -19,15 +19,15 @@ std::uniform_int_distribution<ul> dist{0, std::numeric_limits<ul>::max()};
 inline change gen_change(solution &sol) {
   change c;
   c.change_type = dist(eng) % sol._computers.size();
-  if (c.change_type == 0) { // move market
-    c.from = dist(eng) % sol._computers.size(),
+  if (c.change_type == 0) {
+    c.from = dist(eng) % sol._computers.size();
     c.who = dist(eng) % sol._computers[c.from]._markets.size();
     while (true) {
       c.to = dist(eng) % sol._computers.size();
       if (c.to != c.from)
         break;
     }
-  } else { // k-swap
+  } else {
     ul aux, num = 0;
     std::unordered_set<ul> used;
     while (true) {
@@ -38,9 +38,10 @@ inline change gen_change(solution &sol) {
           break;
       }
     }
-    while (!used.empty())
-      c.computer_sequence.push_back({*used.begin(), 0}),
-          used.erase(used.begin());
+    while (!used.empty()) {
+      c.computer_sequence.push_back({*used.begin(), 0});
+      used.erase(used.begin());
+    }
     for (std::pair<ul, ul> &i : c.computer_sequence)
       i.second = dist(eng) % sol._computers.at(i.first)._markets.size();
   }
@@ -55,10 +56,11 @@ inline void initial_greedy(instance &inst, solution &sol) {
   std::list<market> v(inst._markets.begin(), inst._markets.end());
   ul idx = 0;
   computer c(0);
-  bool found = false, (*compare)(const computer &, const computer &) =
-                          [](const computer &a, const computer &b) {
-                            return a._events_sum > b._events_sum;
-                          };
+  bool found = false;
+  bool (*compare)(const computer &, const computer &) = [](const computer &a,
+                                                           const computer &b) {
+    return a._events_sum > b._events_sum;
+  };
   std::priority_queue<computer, std::vector<computer>, decltype(compare)>
       min_heap(compare);
   for (ul i = 0; i < inst._k; ++i)
@@ -68,14 +70,13 @@ inline void initial_greedy(instance &inst, solution &sol) {
     for (std::list<market>::iterator it = v.begin(); it != v.end(); ++it) {
       if (c._constraint_count[it->_exchange_id] <
           inst._hard_constraints[it->_exchange_id]) {
-        c._markets.push_back(*it), c._events_sum += it->_events_avg,
-            c._constraint_count[it->_exchange_id]++, v.erase(it), found = true;
+        c._markets.push_back(*it), c._events_sum += it->_events_avg;
+        c._constraint_count[it->_exchange_id]++, v.erase(it), found = true;
         break;
       }
     }
     if (!found)
-      printf("No more markets can be added. This solution is invalid.\n"),
-          exit(EXIT_FAILURE);
+      printf("This solution is invalid.\n"), exit(EXIT_FAILURE);
     min_heap.push(c);
   }
   while (!min_heap.empty())
@@ -88,13 +89,11 @@ inline void reconstruct_greedy(solution &sol, instance &inst) {
   std::unordered_set<ul> affected_computers;
   ul num_k = dist(eng) % sol._computers.size() + 1, chosen_computer, start, end;
   std::pair<ul, computer> p;
-
   while (affected_computers.size() != num_k) {
     chosen_computer = dist(eng) % sol._computers.size();
     if (affected_computers.find(chosen_computer) == affected_computers.end())
       affected_computers.insert(chosen_computer);
   }
-
   for (ul i : affected_computers) {
     end = dist(eng) % sol._computers.at(i)._markets.size();
     if (end == 0)
@@ -111,19 +110,17 @@ inline void reconstruct_greedy(solution &sol, instance &inst) {
         sol._computers.at(i)._markets.begin() + start,
         sol._computers.at(i)._markets.begin() + start + end);
   }
-
   std::sort(markets.begin(), markets.end(),
             [](const market &a, const market &b) {
               return a._events_avg > b._events_avg;
             });
   std::list<market> markets_list(markets.begin(), markets.end());
-
-  bool found = false, (*compare)(const std::pair<ul, computer> &,
-                                 const std::pair<ul, computer> &) =
-                          [](const std::pair<ul, computer> &a,
-                             const std::pair<ul, computer> &b) {
-                            return a.second._events_sum > b.second._events_sum;
-                          };
+  bool found = false;
+  bool (*compare)(const std::pair<ul, computer> &,
+                  const std::pair<ul, computer> &) =
+      [](const std::pair<ul, computer> &a, const std::pair<ul, computer> &b) {
+        return a.second._events_sum > b.second._events_sum;
+      };
   std::priority_queue<std::pair<ul, computer>,
                       std::vector<std::pair<ul, computer>>, decltype(compare)>
       min_heap(compare);
@@ -135,16 +132,15 @@ inline void reconstruct_greedy(solution &sol, instance &inst) {
          it != markets_list.end(); ++it) {
       if (p.second._constraint_count[it->_exchange_id] <
           inst._hard_constraints[it->_exchange_id]) {
-        p.second._markets.push_back(*it),
-            p.second._events_sum += it->_events_avg,
-            p.second._constraint_count[it->_exchange_id]++,
-            markets_list.erase(it), found = true;
+        p.second._markets.push_back(*it);
+        p.second._events_sum += it->_events_avg;
+        p.second._constraint_count[it->_exchange_id]++;
+        markets_list.erase(it), found = true;
         break;
       }
     }
     if (!found)
-      printf("No more markets can be added. This solution is invalid.\n"),
-          exit(EXIT_FAILURE);
+      printf("This solution is invalid.\n"), exit(EXIT_FAILURE);
     min_heap.push(p);
   }
   while (!min_heap.empty())
@@ -158,25 +154,33 @@ inline void local_search(solution &sol) {
   for (ul i = 0; i < ITERATIONS_LOCAL_SEARCH; ++i) {
     c = gen_change(sol), new_value = sol.partial_eval(c);
     if (new_value < sol._value) {
-      sol.apply_change(c, new_value),
-          printf("Found a better solution in the local search\n");
+      sol.apply_change(c, new_value), printf("LS found a better solution\n");
       return;
     }
   }
-  printf("No better solution found in local search.\n");
+  printf("No better solution found in the LS.\n");
 };
 
 inline void iterated_greedy(instance &inst, solution &sol) {
   std::vector<ul> hard_constraints(inst._n_exchanges);
-  ul aux = 0;
+  std::vector<solution> solutions;
+  ul aux = 0, best_value = std::numeric_limits<ul>::max(), idx = 0;
   for (std::pair<ul, ul> i : inst._hard_constraints)
     hard_constraints[i.first] = i.second;
   initial_greedy(inst, sol);
-  do {
-    for (ul i = 0; i < ITERATIONS_ITERATED_GREEDY; ++i)
-      local_search(sol), reconstruct_greedy(sol, inst);
-    local_search(sol), printf("Iteration %lu:\n", aux++);
-  } while (!sol.check_validity(hard_constraints));
+  for (ul j = 0; j < ITERATIONS; j++) {
+    do {
+      for (ul i = 0; i < ITERATIONS_ITERATED_GREEDY; ++i)
+        local_search(sol), reconstruct_greedy(sol, inst);
+      local_search(sol), printf("Iteration %lu:\n", aux++);
+    } while (!sol.check_validity(hard_constraints));
+    solutions.push_back(sol);
+  }
+  for(std::vector<solution>::iterator it = solutions.begin();
+      it != solutions.end(); ++it) {
+    if(it->_value < best_value)
+      best_value = it->_value, idx = it - solutions.begin();
+  }
   printf("Final solution:\n");
-  sol.print(false);
+  solutions[idx].print(false);
 };
