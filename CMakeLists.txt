@@ -4,10 +4,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_STANDARD_REQUIRED ON)
 
 #set(CMAKE_BUILD_TYPE debug)
-set(CMAKE_CXX_FLAGS_RELEASE "-ggdb -Wall -Wextra")
+#set(CMAKE_CXX_FLAGS_RELEASE "-ggdb -Wall -Wextra")
 
 set(CMAKE_BUILD_TYPE release)
-set(CMAKE_CXX_FLAGS_RELEASE "-ggdb -Wall -Wextra -O3 -march=native -flto=auto")
+#set(CMAKE_CXX_FLAGS_RELEASE "-ggdb -Wall -Wextra -O3 -march=native -flto=auto")
 
 include(CheckIPOSupported)
 check_ipo_supported(RESULT ipo_supported)

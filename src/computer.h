@@ -22,9 +22,14 @@ struct computer {
 
   inline ul calc_sum() {
     ul sum = 0;
+
+    //Mude se der errado
+   
     for (auto &i : this->_markets)
       sum += i._events_avg;
+      
     this->_events_sum = sum;
+    this->_events_sum_square = pow(sum,2) ;
     return sum;
   };
 
@@ -35,6 +40,7 @@ struct computer {
   std::vector<market> _markets;
   std::vector<ul> _constraint_count;
   ul _events_sum;
+  ul _events_sum_square;
 };
 
 #endif // COMPUTER_H
