@@ -5,14 +5,19 @@
 
 using ul = unsigned long;
 
-struct market{
-    inline market(const ul events_avg, const ul exchange_id, const ul market_id) : _events_avg(events_avg), _exchange_id(exchange_id), _market_id(market_id) {};
-    
-    inline ~market() {};
+struct market {
+  inline market(const ul events_avg, const ul exchange_id, const ul market_id)
+      : _events_avg(events_avg), _exchange_id(exchange_id),
+        _market_id(market_id){};
 
-    inline void print() const{printf("exchange_id: %lu, market_id: %lu, events_avg: %lu\n", this->_exchange_id, this->_market_id, this->_events_avg);};
+  inline ~market(){};
 
-    ul _events_avg, _exchange_id, _market_id;
+  inline void print() const {
+    printf("exchange_id: %lu, market_id: %lu, events_avg: %lu\n",
+           this->_exchange_id, this->_market_id, this->_events_avg);
+  };
+
+  ul _events_avg, _exchange_id, _market_id;
 };
 
 #endif // SOLUTION_H
