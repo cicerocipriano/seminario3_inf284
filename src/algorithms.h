@@ -9,9 +9,9 @@
 using ul = unsigned long;
 using ld = long double;
 
-constexpr ul ITERATIONS_LOCAL_SEARCH = 10000;
-constexpr ul ITERATIONS_ITERATED_GREEDY = 100;
-constexpr ul ITERATIONS = 2;
+constexpr ul ITERATIONS_LOCAL_SEARCH = 100000;
+constexpr ul ITERATIONS_ITERATED_GREEDY = 1000;
+constexpr ul ITERATIONS = 100;
 
 std::mt19937_64 eng{std::random_device{}()};
 std::uniform_int_distribution<ul> dist{0, std::numeric_limits<ul>::max()};
@@ -154,11 +154,11 @@ inline void local_search(solution &sol) {
   for (ul i = 0; i < ITERATIONS_LOCAL_SEARCH; ++i) {
     c = gen_change(sol), new_value = sol.partial_eval(c);
     if (new_value < sol._value) {
-      sol.apply_change(c, new_value), printf("LS found a better solution\n");
+      sol.apply_change(c, new_value)/*, printf("LS found a better solution\n")*/;
       return;
     }
   }
-  printf("No better solution found in the LS.\n");
+  //printf("No better solution found in the LS.\n");
 };
 
 inline void iterated_greedy(instance &inst, solution &sol) {
@@ -172,7 +172,7 @@ inline void iterated_greedy(instance &inst, solution &sol) {
     do {
       for (ul i = 0; i < ITERATIONS_ITERATED_GREEDY; ++i)
         local_search(sol), reconstruct_greedy(sol, inst);
-      local_search(sol), printf("Iteration %lu:\n", aux++);
+      local_search(sol)/*, printf("Iteration %lu:\n", aux++)*/;
     } while (!sol.check_validity(hard_constraints));
     solutions.push_back(sol);
   }
