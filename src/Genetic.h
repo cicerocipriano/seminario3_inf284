@@ -30,6 +30,7 @@ struct Genetic
 	std::uniform_int_distribution<> dist2;
 	int pop_size;
 	int iterations;
+	std::vector<ul> hard_c;
 
 
     //std::numeric_limits<long double>::max()
@@ -37,10 +38,14 @@ struct Genetic
 	inline Genetic(instance i)
 	{
 
-		pop_size = 500;
-		iterations=100;
+		pop_size = 5000;
+		iterations=1000;
 		sols = std::priority_queue<solution, std::vector<solution>, std_comp>();
-		
+		hard_c = std::vector<ul>(i._n_exchanges);
+
+		for (std::pair<ul, ul> i : i._hard_constraints)
+			hard_c[i.first] = i.second;
+
 		eng = std::mt19937(rd());
 		dist = std::uniform_int_distribution<>(0, 1);
 		dist2 = std::uniform_int_distribution<>(0, 1);
@@ -55,7 +60,7 @@ struct Genetic
 			
 			
 
-			if (false)
+			if (!s.check_validity(hard_c))
 			{
 				a--;
 				continue;
@@ -63,10 +68,7 @@ struct Genetic
 			
 			
 
-			s.calc_mean();
-			s.calc_variance();
-			s.calc_std_deviation();
-
+		
 			s.evaluation();
 
 			//s.print(false);
@@ -196,18 +198,34 @@ struct Genetic
 
 			a1b1.evaluation();
 			a1b2.evaluation();
-			b1a1.evaluation();
+			//b1a1.evaluation();
 			b1a2.evaluation();
 			
-			//a2b2.evaluation();
+			a2b2.evaluation();
 			//b2a2.evaluation();
 
-			hold.emplace(a1b1);
-			hold.emplace(a1b2);
-			hold.emplace(b1a1);
-			hold.emplace(b1a2);
+
+			if (a1b1.check_validity(hard_c))
+			{
+				hold.emplace(a1b1);
+			}
+			
+			if (a1b2.check_validity(hard_c))
+			{
+				hold.emplace(a1b2);
+			}
+			//hold.emplace(b1a1);
+			if (b1a2.check_validity(hard_c))
+			{
+				hold.emplace(b1a2);
+			}
 			//hold.emplace(b2a2);
-			//hold.emplace(a2b2);
+
+			if (a2b2.check_validity(hard_c))
+			{
+				hold.emplace(a2b2);
+			}
+			
 			//std::cout << "Aqui" << std::endl;
 
 		}
@@ -225,17 +243,27 @@ struct Genetic
 	inline void next_generation(instance i)
 	{
 		std::vector<solution> good_sols = std::vector<solution>();
-		for (int a = 0; a < 25; a++)
+		std::vector<solution> elite_sols = std::vector<solution>();
+
+		int good_limit = sols.size()/4;
+		int elite_limit = (sols.size() * 3) / 100;
+
+		for (int a = 0; a < good_limit; a++)
 		{
 			auto s = sols.top(); sols.pop();
+
+			if (a < elite_limit)
+			{
+				elite_sols.push_back(s);
+			}
 			//std::cout << "tamanho good sol:" << s._computers.size() << std::endl;
 			good_sols.push_back(s);
 
 			
 		}
 
-		auto first_place = good_sols[0];
-		auto second_place = good_sols[1];
+		//auto first_place = good_sols[0];
+		//auto second_place = good_sols[1];
 		
 		sols = std::priority_queue<solution, std::vector<solution>, std_comp>();
 		//auto rng = std::default_random_engine{};
@@ -269,8 +297,13 @@ struct Genetic
 
 		}
 
-		sols.emplace(first_place);
-		sols.emplace(second_place);
+		//sols.emplace(first_place);
+		//sols.emplace(second_place);
+
+		for (int a = 0; a < elite_sols.size(); a++)
+		{
+			sols.emplace(elite_sols[a]);
+		}
 
 		
 		
@@ -280,12 +313,16 @@ struct Genetic
 
 	inline void solve(instance i)
 	{
+
+		std::priority_queue<solution, std::vector<solution>, std_comp> best_it_sols = std::priority_queue<solution, std::vector<solution>, std_comp>();
 		for (int a = 0; a < iterations; a++)
 		{
 			next_generation(i);
+			//std::cout << "gen size: " << sols.size() << std::endl;
+			best_it_sols.emplace(sols.top());
 		}
 
-		sols.top().print(false);
+		best_it_sols.top().print(false);
 	}
 
 
