@@ -52,7 +52,7 @@ struct Genetic
 		//i.print();
 
 		int a = 0;
-		while (a < pop_size)
+		while (a < pop_size/2)
 		{
 			
 			a++;
@@ -80,6 +80,19 @@ struct Genetic
 
 
 		}
+
+		while (a < pop_size / 2)
+		{
+			solution s = solution();
+			initial_greedy(i,s);
+
+			sols.emplace(s);
+		}
+
+
+		//std::cout << sols.top()._value << std::endl;
+
+
 	}
 
 
@@ -289,7 +302,7 @@ struct Genetic
 
 		}
 
-		while (sols.size() < 25 || sols.size() % 2 != 0)
+		while (sols.size() < good_limit || sols.size() % 2 != 0)
 		{
 			auto s = gen_random_sol(i);
 			s.evaluation();
