@@ -31,4 +31,4 @@ This repository contains the codebase for a metaheuristics project aimed at solv
 
 ## Setup:
 After cloning the repository, go to the repository directory. Write the commands ```mkdir build && cd build && cmake ..```. If everything works correctly, you can compile it with ```make -j4``` (the number should be number of cores in your computer).
-If you need help in the execution, run ```./sem3 --h```.
+If you need help in the execution, run ```./sem3 -h```.
