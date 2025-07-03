@@ -154,33 +154,40 @@ inline void local_search(solution &sol) {
   for (ul i = 0; i < ITERATIONS_LOCAL_SEARCH; ++i) {
     c = gen_change(sol), new_value = sol.partial_eval(c);
     if (new_value < sol._value) {
-      sol.apply_change(c, new_value)/*, printf("LS found a better solution\n")*/;
+      sol.apply_change(c,
+                       new_value) /*, printf("LS found a better solution\n")*/;
       return;
     }
   }
-  //printf("No better solution found in the LS.\n");
+  // printf("No better solution found in the LS.\n");
 };
 
 inline void iterated_greedy(instance &inst, solution &sol) {
-  std::vector<ul> hard_constraints(inst._n_exchanges);
-  std::vector<solution> solutions;
-  ul aux = 0, best_value = std::numeric_limits<ul>::max(), idx = 0;
-  for (std::pair<ul, ul> i : inst._hard_constraints)
-    hard_constraints[i.first] = i.second;
+  bool (*compare)(const solution &, const solution &) = [](const solution &a,
+                                                           const solution &b) {
+    if (std::round(a._value * 10000.0L) / 10000.0L >
+        std::round(b._value * 10000.0L) / 10000.0L)
+      return true;
+    else if (std::round(a._value * 10000.0L) / 10000.0L <
+             std::round(b._value * 10000.0L) / 10000.0L)
+      return false;
+    else
+      return a._soft_value < b._soft_value;
+  };
+  std::priority_queue<solution, std::vector<solution>, decltype(compare)>
+      solutions(compare);
+  ul /*aux = 0, */ best_value = std::numeric_limits<ul>::max(), idx = 0;
   initial_greedy(inst, sol);
   for (ul j = 0; j < ITERATIONS; j++) {
     do {
       for (ul i = 0; i < ITERATIONS_ITERATED_GREEDY; ++i)
         local_search(sol), reconstruct_greedy(sol, inst);
-      local_search(sol)/*, printf("Iteration %lu:\n", aux++)*/;
-    } while (!sol.check_validity(hard_constraints));
-    solutions.push_back(sol);
+      local_search(sol) /*, printf("Iteration %lu:\n", aux++)*/;
+    } while (!sol.check_validity(inst._hard_constraints));
+    sol.calc_soft_value(inst._hard_constraints);
+    solutions.push(sol);
   }
-  for(std::vector<solution>::iterator it = solutions.begin();
-      it != solutions.end(); ++it) {
-    if(it->_value < best_value)
-      best_value = it->_value, idx = it - solutions.begin();
-  }
+
   printf("Final solution:\n");
-  solutions[idx].print(false);
+  solutions.top().print(false);
 };

@@ -22,9 +22,9 @@ struct solution {
       for (std::pair<ul, computer> i : this->_computers)
         i.second.print();
     printf("Number of computers: %lu\nMean: %.5Lf\nVariance: %.5Lf\nStandard "
-           "Deviation: %.5Lf\nSolution Value: %.5Lf\n",
+           "Deviation: %.5Lf\nSolution Value: %.5Lf\nSoft Value: %.5Lf\n",
            this->_computers.size(), this->_mean, this->_variance,
-           this->_std_deviation, this->_value);
+           this->_std_deviation, this->_value, this->_soft_value);
   };
 
   inline ul markets_in_solution() const {
@@ -154,7 +154,8 @@ struct solution {
     return new_var;
   };
 
-  inline bool check_validity(std::vector<ul> &hard_constraints) const {
+  inline bool
+  check_validity(std::unordered_map<ul, ul> &hard_constraints) const {
     for (std::pair<ul, computer> i : this->_computers) {
       if (!i.second.check_computer(hard_constraints)) {
         printf("Invalid: computer %lu has exceeded the limit.\n", i.first);
@@ -164,9 +165,24 @@ struct solution {
     return true;
   };
 
+  inline ld calc_soft_value(std::unordered_map<ul, ul> &hard_constraints) {
+    std::vector<ld> vec(this->_computers.size());
+    for (std::pair<ul, computer> i : this->_computers)
+      vec[i.first] = i.second.calc_cd(hard_constraints);
+    ld sum = 0.0, mean, variance;
+    for (ld i : vec)
+      sum += i;
+    mean = sum / vec.size(), sum = 0.0;
+    for (ld i : vec)
+      sum += pow(i - mean, 2);
+    variance = sum / vec.size();
+    this->_soft_value = sqrt(variance);
+    return this->_soft_value;
+  };
+
   std::unordered_map<ul, computer> _computers;
   ul _events_sum;
-  ld _mean, _variance, _std_deviation, _value;
+  ld _mean, _variance, _std_deviation, _value, _soft_value;
 };
 
 #endif // SOLUTION_H

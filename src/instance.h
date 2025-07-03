@@ -34,7 +34,7 @@ struct instance {
     std::ifstream config("../instances/config.json");
     if (!config)
       printf("Error: Config file not found.\n"), exit(EXIT_FAILURE);
-    std::ifstream file("../instances/" + filename);
+    std::ifstream file("../instances/" + filename + ".json");
     if (!file)
       printf("Error: Instance file not found.\n"), exit(EXIT_FAILURE);
     this->_data = nlohmann::json::parse(file);

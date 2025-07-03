@@ -1,8 +1,10 @@
 {
-    "binance": 180,
-    "deribit": 150,
-    "okx": 85,
-    "mb": 45,
-    "b3": 100,
-    "nyse": 120
+    "b3": 50,
+    "nyse": 50,
+    "binance": 300,
+    "bitmex": 500,
+    "bybit": 5000,
+    "deribit": 2000,
+    "mb": 25,
+    "okx": 3000
 }

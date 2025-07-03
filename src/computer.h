@@ -4,6 +4,7 @@
 #include "market.h"
 
 using ul = unsigned long;
+using ld = long double;
 
 struct computer {
   inline computer() : _events_sum(0){};
@@ -17,8 +18,10 @@ struct computer {
   inline void print() const {
     for (const market &i : this->_markets)
       i.print();
-    printf("Sum of events: %lu\nNumber of markets: %lu\n", this->_events_sum,
-           this->_markets.size());
+    printf("Sum of events: %lu\nNumber of markets: %lu\nComputer Distribution: "
+           "%lu\n",
+           this->_events_sum, this->_markets.size(),
+           this->_computer_distribution);
   };
 
   inline ul calc_sum() {
@@ -33,16 +36,33 @@ struct computer {
     this->_constraint_count.resize(cc.size(), 0);
   };
 
-  inline bool check_computer(std::vector<ul> &hard_constraints) const {
+  inline bool
+  check_computer(std::unordered_map<ul, ul> &hard_constraints) const {
     for (ul i = 0; i < this->_constraint_count.size(); ++i)
-      if (this->_constraint_count[i] > hard_constraints[i])
+      if (this->_constraint_count[i] > hard_constraints.at(i))
         return false;
     return true;
+  };
+
+  inline ld calc_cd(std::unordered_map<ul, ul> &hard_constraints) {
+    std::vector<ul> vec(this->_constraint_count.size());
+    for (std::pair<ul, ul> i : hard_constraints)
+      vec[i.first] = (100.0 * this->_constraint_count[i.first]) / i.second;
+    ld sum = 0.0, mean, variance;
+    for (ul i : vec)
+      sum += i;
+    mean = sum / vec.size(), sum = 0.0;
+    for (ul i : vec)
+      sum += pow(i - mean, 2);
+    variance = sum / vec.size();
+    this->_computer_distribution = sqrt(variance);
+    return this->_computer_distribution;
   };
 
   std::vector<market> _markets;
   std::vector<ul> _constraint_count;
   ul _events_sum, _events_sum_square;
+  ld _computer_distribution;
 };
 
 #endif // COMPUTER_H

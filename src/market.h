@@ -17,8 +17,6 @@ struct market {
   inline void print() const {
     printf("exchange_id: %lu, market_id: %lu, events_avg: %lu\n",
            this->_exchange_id, this->_market_id, this->_events_avg);
-    
-    
   };
 
   ul _events_avg, _exchange_id, _market_id;
