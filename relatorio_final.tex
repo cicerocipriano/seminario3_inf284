@@ -93,7 +93,7 @@ inline void initial_greedy(instance &inst, solution &sol) {
 
 \end{lstlisting}
 \begingroup
-\captionof{lstlisting}{Código da função da solução inicial greedy, Em pseudocodígo.}
+\captionof{lstlisting}{Código da função da solução inicial greedy, em pseudocodígo.}
 \endgroup
 
 
@@ -107,15 +107,23 @@ Após cada mudança, usa-se de uma avaliação parcial para determinar os valore
 
 inline void local_search(solution &sol) {
 
+      List<Solutions> sols = List<Solutions>()
+      Solution sol = initial_greedy
+        
+      for i < iterations:
+              local_search(sol)
+              reconstruct(sol)
+              local_search(sol)
 
-//Função de busca local
- 
+
+     if(validate(sol))
+         sols.add(sol)
 
 };
 
 \end{lstlisting}
 \begingroup
-\captionof{lstlisting}{Código da função da busca local, Em pseudocodígo.}
+\captionof{lstlisting}{Código da função da busca local, em pseudocodígo.}
 \endgroup
 
 
@@ -127,9 +135,81 @@ inline void local_search(solution &sol) {
 No Algoritmo genético, a procura pela solução ótima começa pela geração da população inicial do GA, a qual tem um tamanho total definido,e é constituída metade por soluções aleatoriamente geradas e metade por soluções geradas usando a função greedy para criação da solução inicial, todas soluções são armazenadas em um min heap, e são validadas em relação ao hard constraint.
 
 
+\begin{lstlisting}
+
+inline solution gen_random_sol(instance i) {
+
+      Solution sol = Solution sol()
+      
+      for (m in i.markets)
+      {
+               rc=  sol.random_computer()
+              rc.markest.add(rc)
+      }
+
+      return sol
+
+};
+
+\end{lstlisting}
+\begingroup
+\captionof{lstlisting}{Código da função de solução inicial aleatoria, em pseudocodígo.}
+\endgroup
+
+
 
 Após a geração da população inicial, começa-se o processo de reprodução e seleção das soluções. Da população total, são selecionados as soluções com os 25\% melhores valores, essas soluções selecionadas são agrupadas em pares e para cada par são gerados 4 soluções filhas, construídas de uma das metades do conjunto de computadores de cada pai, algumas destas soluções sofrem mutações, mudando aleatoriamente parte de seus computadores. Além disso, as 3\% melhores soluções das soluções escolhidas para se reproduzir são clonadas e inseridas na nova geração, isso é feito para reduzir a probabilidade das novas gerações produzirem resultados piores que as prévias, melhorando assim a performance desta metaheurística. Após cada geração, a melhor solução encontrada é armazenada no min heap,e, após todas as gerações serem criadas, a melhor solução é encontrada no topo deste heap.
 
+
+\begin{lstlisting}
+
+inline void next_generation(instance i)
+{
+     list<sols> populacao
+    list<sols> good_sols
+    list<sols> elite_sols
+     for a < i.markets/4
+     { 
+             good_sols.add( i_markets[a] )
+             
+             if(a <  i.markets*3/100) 
+                     { elite_sols.append( i_markets[a)}
+    }
+
+   good_sols.shuffle()
+
+   populacao.clear()
+
+   for a < good_sols.size()
+   {
+
+       next = 0
+       if(a+1< good_sols.size()) next = a+1
+        
+       gerar_filhos(a,next)
+       if(chance_mut)
+       {
+                  mutate(filho)
+       }
+       populacao.add(filhos)
+
+
+  }
+
+  for e in elite
+      populacao.add(e)
+
+    
+       
+    
+
+
+
+};
+\end{lstlisting}
+\begingroup
+\captionof{lstlisting}{Código da função de nova geração, em pseudocodígo.}
+\endgroup
 
 
 
