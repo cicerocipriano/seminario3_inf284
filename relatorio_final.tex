@@ -97,6 +97,15 @@ inline void initial_greedy(instance &inst, solution &sol) {
 \endgroup
 
 
+Após a criação da solução inicial, inicia-se o processo de busca local do Iterated Greedy, nessa etapa são geradas variações da melhor solução, e se alguma delas for melhor que a melhor solução conhecida, ela substitui essa, terminando a busca. Para gerar variações de uma solução são utilizados dois tipos de mudanças, move e swap; No move, um mercado é retirado do computador e adicionado a outro. No swap, os mercados são trocados entre os computadores de maneira cíclica, ou seja,sem mudar o número de mercados em cada computador. 
+
+Após cada mudança, usa-se de uma avaliação parcial para determinar os valores da solução, o uso da avaliação parcial reduz o tempo de execução necessário para processar cada nova solução gerada, possibilitando que a busca local seja mais eficiente do que se necessita-se de uma avaliação completa. Todos os processos acima são repetidos por um número definido de iterações, e depois da conclusão destas, a solução ótima é encontrada.
+
+
+
+
+
+
 
 
 
