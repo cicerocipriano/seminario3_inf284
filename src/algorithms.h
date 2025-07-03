@@ -9,8 +9,8 @@
 using ul = unsigned long;
 using ld = long double;
 
-constexpr ul ITERATIONS_LOCAL_SEARCH = 100000;
-constexpr ul ITERATIONS_ITERATED_GREEDY = 1000;
+constexpr ul ITERATIONS_LOCAL_SEARCH = 10000;
+constexpr ul ITERATIONS_ITERATED_GREEDY = 100;
 constexpr ul ITERATIONS = 100;
 
 std::mt19937_64 eng{std::random_device{}()};
@@ -85,6 +85,7 @@ inline void initial_greedy(instance &inst, solution &sol) {
 };
 
 inline void reconstruct_greedy(solution &sol, instance &inst) {
+  solution extra = sol;
   std::vector<market> markets;
   std::unordered_set<ul> affected_computers;
   ul num_k = dist(eng) % sol._computers.size() + 1, chosen_computer, start, end;
@@ -139,8 +140,10 @@ inline void reconstruct_greedy(solution &sol, instance &inst) {
         break;
       }
     }
-    if (!found)
-      printf("This solution is invalid.\n"), exit(EXIT_FAILURE);
+    if (!found){
+      sol = extra;
+      return;
+    }
     min_heap.push(p);
   }
   while (!min_heap.empty())
@@ -154,12 +157,10 @@ inline void local_search(solution &sol) {
   for (ul i = 0; i < ITERATIONS_LOCAL_SEARCH; ++i) {
     c = gen_change(sol), new_value = sol.partial_eval(c);
     if (new_value < sol._value) {
-      sol.apply_change(c,
-                       new_value) /*, printf("LS found a better solution\n")*/;
+      sol.apply_change(c, new_value);
       return;
     }
   }
-  // printf("No better solution found in the LS.\n");
 };
 
 inline void iterated_greedy(instance &inst, solution &sol) {
@@ -176,13 +177,15 @@ inline void iterated_greedy(instance &inst, solution &sol) {
   };
   std::priority_queue<solution, std::vector<solution>, decltype(compare)>
       solutions(compare);
-  ul /*aux = 0, */ best_value = std::numeric_limits<ul>::max(), idx = 0;
+  ul best_value = std::numeric_limits<ul>::max(), idx = 0;
   initial_greedy(inst, sol);
+  sol.calc_soft_value(inst._hard_constraints);
+  solutions.push(sol);
   for (ul j = 0; j < ITERATIONS; j++) {
     do {
       for (ul i = 0; i < ITERATIONS_ITERATED_GREEDY; ++i)
         local_search(sol), reconstruct_greedy(sol, inst);
-      local_search(sol) /*, printf("Iteration %lu:\n", aux++)*/;
+      local_search(sol);
     } while (!sol.check_validity(inst._hard_constraints));
     sol.calc_soft_value(inst._hard_constraints);
     solutions.push(sol);

@@ -13,7 +13,7 @@ struct change {
 
 struct solution {
   inline solution()
-      : _mean(0.0), _variance(0.0), _std_deviation(0.0), _value(0.0){};
+      : _mean(0.0L), _variance(0.0L), _std_deviation(0.0L), _value(0.0L), _soft_value(0.0L){};
 
   inline ~solution(){};
 
@@ -92,14 +92,14 @@ struct solution {
   };
 
   inline void calc_mean() {
-    ld sum = 0.0;
+    ld sum = 0.0L;
     for (std::pair<ul, computer> i : this->_computers)
       sum += i.second._events_sum;
     this->_mean = sum / this->_computers.size();
   };
 
   inline void calc_variance() {
-    ld sum = 0.0;
+    ld sum = 0.0L;
     for (std::pair<ul, computer> i : this->_computers)
       sum += pow(i.second._events_sum - this->_mean, 2);
     this->_variance = sum / this->_computers.size();
@@ -112,7 +112,7 @@ struct solution {
   inline void evaluation() {
     if (this->_computers.empty()) {
       this->_mean = this->_variance = this->_std_deviation = this->_value =
-          -1.0;
+          -1.0L;
       return;
     }
     this->calc_mean(), this->calc_variance(), this->calc_std_deviation();
@@ -157,10 +157,8 @@ struct solution {
   inline bool
   check_validity(std::unordered_map<ul, ul> &hard_constraints) const {
     for (std::pair<ul, computer> i : this->_computers) {
-      if (!i.second.check_computer(hard_constraints)) {
-        printf("Invalid: computer %lu has exceeded the limit.\n", i.first);
+      if (!i.second.check_computer(hard_constraints))
         return false;
-      }
     }
     return true;
   };
@@ -169,10 +167,10 @@ struct solution {
     std::vector<ld> vec(this->_computers.size());
     for (std::pair<ul, computer> i : this->_computers)
       vec[i.first] = i.second.calc_cd(hard_constraints);
-    ld sum = 0.0, mean, variance;
+    ld sum = 0.0L, mean, variance;
     for (ld i : vec)
       sum += i;
-    mean = sum / vec.size(), sum = 0.0;
+    mean = sum / vec.size(), sum = 0.0L;
     for (ld i : vec)
       sum += pow(i - mean, 2);
     variance = sum / vec.size();

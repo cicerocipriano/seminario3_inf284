@@ -8,7 +8,7 @@ using ld = long double;
 
 struct std_comp {
   bool operator()(const solution &a, const solution &b) const {
-    return a._std_deviation > b._std_deviation;
+    return a._value > b._value;
   }
 };
 
@@ -39,11 +39,13 @@ struct Genetic {
         a--;
         continue;
       }
+      s.calc_soft_value(i._hard_constraints);
       s.evaluation();
       this->sols.emplace(s);
     }
     while (a < this->pop_size / 2) {
-      solution s = solution();
+      a++;
+      solution s;
       initial_greedy(i, s);
       this->sols.emplace(s);
     }
@@ -53,7 +55,7 @@ struct Genetic {
     std::vector<market> mks = i._markets;
     solution s = solution();
     for (ul a = 0; a < i._k; a++) {
-      computer c = computer();
+      computer c(i._hard_constraints.size());
       s._computers.insert({a, c});
     }
     this->dist = std::uniform_int_distribution<>(0, s._computers.size() - 1);
@@ -61,9 +63,12 @@ struct Genetic {
       market m = i._markets[a];
       ul inx = this->dist(this->eng);
       s._computers.at(inx)._markets.push_back(m);
+      s._computers.at(inx)._constraint_count[m._exchange_id]++;
     }
-    for (ul a = 0; a < i._k; a++)
+    for (ul a = 0; a < i._k; a++){
       s._computers.at(a).calc_sum();
+      s._computers.at(a).calc_cd(i._hard_constraints);
+    }
     return s;
   }
 
@@ -76,7 +81,14 @@ struct Genetic {
       ul half = p1._computers.size() / 2;
       if (p1._computers.size() != p2._computers.size())
         printf("%lu Ack %lu\n", p1._computers.size(), p2._computers.size());
-      for (ul a = 0; a < 5; a++) {
+      ul maximum = 5;
+      if(p1._computers.size() < 5)
+        maximum = 2;
+      else if(p1._computers.size() < 7)
+        maximum = 3;
+      else if(p1._computers.size() < 9)
+        maximum = 4;
+      for (ul a = 0; a < maximum; a++) {
         a1b1._computers.at(half + a) = p2._computers.at(a);
         b1a1._computers.at(half + a) = p1._computers.at(a);
         b1a2._computers.at(half + a) = p1._computers.at(a + half);
@@ -84,10 +96,12 @@ struct Genetic {
         a2b2._computers.insert({a, p1._computers.at(a + 0 + half)});
         b2a2._computers.insert({a, p2._computers.at(a + half)});
       }
-      for (ul a = 0; a < 5; a++) {
+      for (ul a = 0; a < maximum; a++) {
         a2b2._computers.insert({a + half, p2._computers.at(a + half)});
         b2a2._computers.insert({a + half, p1._computers.at(a + half)});
       }
+      a1b1.calc_soft_value(i._hard_constraints), a1b2.calc_soft_value(i._hard_constraints);
+      b1a2.calc_soft_value(i._hard_constraints), a2b2.calc_soft_value(i._hard_constraints);
       a1b1.evaluation(), a1b2.evaluation();
       b1a2.evaluation(), a2b2.evaluation();
       if (a1b1.check_validity(i._hard_constraints))
@@ -128,6 +142,7 @@ struct Genetic {
     }
     while (this->sols.size() < good_limit || this->sols.size() % 2 != 0) {
       solution s = gen_random_sol(i);
+      s.calc_soft_value(i._hard_constraints);
       s.evaluation(), this->sols.emplace(s);
     }
     for (int a = 0; a < elite_sols.size(); a++)
@@ -150,7 +165,14 @@ struct Genetic {
         best_it_sols(compare);
     for (int a = 0; a < iterations; a++) {
       this->next_generation(i);
-      best_it_sols.push(this->sols.top());
+      solution temp = this->sols.top();
+      temp.evaluation(), temp.calc_soft_value(i._hard_constraints);
+      best_it_sols.push(temp);
+    }
+    while(best_it_sols.top()._value <= 0.0L || best_it_sols.top()._soft_value <= 0.0L)
+      best_it_sols.pop();
+    if(best_it_sols.empty()){
+      printf("There was a problem.\n"), exit(EXIT_FAILURE);
     }
     best_it_sols.top().print(false);
   }

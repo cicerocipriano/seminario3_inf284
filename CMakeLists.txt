@@ -12,7 +12,6 @@ if(ipo_supported)
 endif()
 
 set(HEADERS src/json.hpp
-            src/argh.h
             src/market.h
             src/computer.h
             src/solution.h
