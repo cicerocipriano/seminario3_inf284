@@ -1,0 +1,123 @@
+\documentclass[12pt]{article}
+
+\usepackage{sbc-template}
+\usepackage{graphicx,url}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{listings}
+
+
+     
+\sloppy
+
+\title{Aplicações do problema de Multi-way number partitioning para mercados financeiros de criptomoedas}
+
+\author{Gabriel C. M. Fernandes\inst{1}, Cicero C. Maciel \inst{1}}
+
+
+\address{ Departamento de Informatica -- Universidade Federal de Viçosa
+  (UFV)\\
+  Caixa Postal 36570-900 -- Viçosa, MG -- Brasil
+  \email{\{gabriel.fernandes1,cicero.maciel\}@ufv.br, @ufv.br}
+}
+
+\lstset{frame=tb,
+  language=C++}
+\setlength{\belowcaptionskip}{10pt}
+
+\begin{document} 
+
+\maketitle
+
+
+     
+\begin{resumo} 
+
+Nesse artigo iremos discutir o uso das metaheurísticas Iterated Greedy e Algoritmo Genético para a resolução do problema da alocação de computadores e mercados em uma empresa financeira e analisaremos sua performance. Esse problema é uma variação mais restrita do Multi-way number partitioning problem com constraints cardinais, sendo inédito na literatura sobre este problema NP-hard.
+
+
+
+\end{resumo}
+
+
+\section{Introdução}
+
+
+PLACEHOLDER CONTEXTO
+
+
+\section{Revisão bibliográfica}
+Analisando a literatura prévia sobre o MNP, não foram encontrados artigos ou publicações que lidam com a variação discutida neste artigo ou alguma variação similar. Contudo, existem variações de interesse a este trabalho, as chamadas diversity-aware, onde se tem como objetivo diversificar o máximo os conjuntos do Multi-way number partitioning, esse objetivo é o oposto do soft constraint, onde se deseja minimizar a diversidade de mercados em cada computador.  Assim, as técnicas usadas nos MNP  diversity-aware são re-utilizadas neste trabalho como uma referência do que deve ser evitado.
+
+\section{Métodos}
+
+Neste trabalho, todo o código usado foi escrito em C++ e usado na forma de um executável compilado. As metaheurísticas usadas foram a Iterated Greedy (IG) e o Algoritmo Genético (GA), essas duas trabalham em torno de uma classe solução, qual armazena um conjunto de computadores e as informações relacionadas aos valores de cada computador, que são derivados de seus mercados, quais fornecem a média de seus eventos como sua informação principal. 
+
+\subsection{Iterated Greedy}
+
+
+Na metaheurística Iterated greedy, a busca pela melhor solução começa pela criação de uma solução inicial, por uma função gulosa. A função gulosa ordena os mercados fornecidos pela instância por sua média de eventos em ordem decrescente, e o distribui para os computadores da solução, sendo que o computador com menor soma de seus mercados é o que recebe, isso é feito até os mercados se esgotarem ou até não ser possível achar uma solução que respeite o hard constraint, caso qual faz o programa emitir um erro e parar. Se todos os computadores tiverem sido criados corretamente, a solução inicial recebe eles, tem suas métricas calculadas e é retornada.
+
+
+
+
+
+\begin{lstlisting}
+
+inline void initial_greedy(instance &inst, solution &sol) {
+ 
+
+ solution sol =   solution()
+  markerts.sort() //Sort em ordem decrescente
+
+
+  comps = computers()
+
+  for (m in markets)
+  {
+         auto cm = computador_menor()
+         cm.inserir(m)
+         
+        if(cm.valido == false)
+       {
+             throw error
+       }
+  }
+
+  sol.computers = comps;
+  sol.calculate_vals()
+
+ return sols
+
+};
+
+\end{lstlisting}
+\begingroup
+\captionof{lstlisting}{Código da função da solução inicial greedy, Em pseudocodígo.}
+\endgroup
+
+
+
+
+
+
+
+
+\section{Experimentos}
+
+PLACEHOLDER CRIAÇÃO DAS INSTÂNCIAS 
+
+Após a preparação das instâncias, elas são fornecidas ao executável como um argumento da linha de comando, junto ao número de computadores a serem usados no experimento, com esses parâmetros, as metaheurísticas são capazes de procurar a melhor solução, o'que é feito por um número pré-determinado de iterações definido pela metaheurística usada, após a conclusão destas iterações,  a melhor solução encontrado é retornada.
+
+
+
+\section{Resultados}
+
+
+\section{Conclusão}
+
+
+\section{Atribuição}
+
+
+\end{document}
