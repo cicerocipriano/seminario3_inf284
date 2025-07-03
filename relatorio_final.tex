@@ -124,6 +124,11 @@ inline void local_search(solution &sol) {
 \subsection{Algoritmo Genético}
 
 
+No Algoritmo genético, a procura pela solução ótima começa pela geração da população inicial do GA, a qual tem um tamanho total definido,e é constituída metade por soluções aleatoriamente geradas e metade por soluções geradas usando a função greedy para criação da solução inicial, todas soluções são armazenadas em um min heap, e são validadas em relação ao hard constraint.
+
+
+
+Após a geração da população inicial, começa-se o processo de reprodução e seleção das soluções. Da população total, são selecionados as soluções com os 25\% melhores valores, essas soluções selecionadas são agrupadas em pares e para cada par são gerados 4 soluções filhas, construídas de uma das metades do conjunto de computadores de cada pai, algumas destas soluções sofrem mutações, mudando aleatoriamente parte de seus computadores. Além disso, as 3\% melhores soluções das soluções escolhidas para se reproduzir são clonadas e inseridas na nova geração, isso é feito para reduzir a probabilidade das novas gerações produzirem resultados piores que as prévias, melhorando assim a performance desta metaheurística. Após cada geração, a melhor solução encontrada é armazenada no min heap,e, após todas as gerações serem criadas, a melhor solução é encontrada no topo deste heap.
 
 
 
