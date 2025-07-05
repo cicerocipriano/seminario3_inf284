@@ -229,7 +229,64 @@ Após a preparação das instâncias, elas são fornecidas ao executável como u
 \section{Resultados}
 
 
+Após a execução das instâncias, obtivemos os seguintes resultados:
+
+
+\begin{table}[h]
+\caption{Valores do desvio padrão}
+\label{tab:my-table}
+\begin{tabular}{lllll}
+       & 2e3c       & 3e4c        & 3e9c            & 4e5c            \\
+Random & 9185.24503 & 14777.92231 & 955212763.55824 & 204772960.74668 \\
+Guloso & 55.11806   & 79.40521    & 0.4969          & 196373704.18246 \\
+IG     & 3.16228    & 1.41421     & 0.4969          & 196373704.18246 \\
+GA     & 7.07107    & 31          & 82061251.06896  & 1005662.0189   
+\end{tabular}
+\end{table}
+
+
+\begin{table}[h]
+\caption{Valores do soft constraint}
+\label{tab:my-table}
+\begin{tabular}{lllll}
+       & 2e3c    & 3e4c    & 3e9c    & 4e5c     \\
+Random & 4.10961 & 5.7382  & 2.45271 & 1.3419   \\
+Guloso & 8.73053 & 3.03848 & 2.06990 & 12.65008 \\
+IG     & 2.35702 & 4.63481 & 7.79603 & 14.10896 \\
+GA     & 6.59966 & 5.22074 & 1.98138 & 2.41449 
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{Valores do desvio padrão}
+\label{tab:my-table}
+\begin{tabular}{lllll}
+       & 5e9c            & 6e7c            & 7e9c            & 8e9c             \\
+Random & 358975385.79006 & 358975385.79006 & 871038693.86482 & 1006239977.42715 \\
+Guloso & 0.41574         & 98643338.67584  & 0.4969          & 196373704.18246  \\
+IG     & 0.41574         & 98643338.67584  & 0.4969          & 0.4969           \\
+GA     & 38719567.45386  & 12386864.89306  & 0.4969          & 54168277.87687  
+\end{tabular}
+\end{table}
+
+
+\begin{table}[ht]
+\caption{Valores do soft constraint}
+\label{tab:my-table}
+\begin{tabular}{lllll}
+       & 5e9c    & 6e7c    & 7e9c    & 8e9c     \\
+Random & 1.49442 & 2.92731 & 1.61148 & 1.24762  \\
+Guloso & 1.44476 & 7.25628 & 1.54236 & 12.65008 \\
+IG     & 6.70453 & 11.4759 & 5.62647 & 5.78055  \\
+GA     & 0.68387 & 1.95114 & 1.17559 & 0.97992 
+\end{tabular}
+\end{table}
+
 \section{Conclusão}
+
+
+Assim, com os resultados obtidos, podemos concluir que a performance das metaheurísticas é altamente dependente da instância usada, sendo possível não obter uma melhora significativa sobre a solução inicial gerada pela função greedy. Assim, para se encontrar a melhor distribuição de mercados para o conjunto dado de computadores, devem ser usadas múltiplas metaheurísticas, já que não é possível garantir que o resultado de qualquer meta heurística usada sozinha seja o melhor possível para a situação analisada.
+
 
 
 \section{Atribuição}
