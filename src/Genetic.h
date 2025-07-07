@@ -65,7 +65,7 @@ struct Genetic {
       s._computers.at(inx)._markets.push_back(m);
       s._computers.at(inx)._constraint_count[m._exchange_id]++;
     }
-    for (ul a = 0; a < i._k; a++){
+    for (ul a = 0; a < i._k; a++) {
       s._computers.at(a).calc_sum();
       s._computers.at(a).calc_cd(i._hard_constraints);
     }
@@ -82,11 +82,11 @@ struct Genetic {
       if (p1._computers.size() != p2._computers.size())
         printf("%lu Ack %lu\n", p1._computers.size(), p2._computers.size());
       ul maximum = 5;
-      if(p1._computers.size() < 5)
+      if (p1._computers.size() < 5)
         maximum = 2;
-      else if(p1._computers.size() < 7)
+      else if (p1._computers.size() < 7)
         maximum = 3;
-      else if(p1._computers.size() < 9)
+      else if (p1._computers.size() < 9)
         maximum = 4;
       for (ul a = 0; a < maximum; a++) {
         a1b1._computers.at(half + a) = p2._computers.at(a);
@@ -100,8 +100,10 @@ struct Genetic {
         a2b2._computers.insert({a + half, p2._computers.at(a + half)});
         b2a2._computers.insert({a + half, p1._computers.at(a + half)});
       }
-      a1b1.calc_soft_value(i._hard_constraints), a1b2.calc_soft_value(i._hard_constraints);
-      b1a2.calc_soft_value(i._hard_constraints), a2b2.calc_soft_value(i._hard_constraints);
+      a1b1.calc_soft_value(i._hard_constraints),
+          a1b2.calc_soft_value(i._hard_constraints);
+      b1a2.calc_soft_value(i._hard_constraints),
+          a2b2.calc_soft_value(i._hard_constraints);
       a1b1.evaluation(), a1b2.evaluation();
       b1a2.evaluation(), a2b2.evaluation();
       if (a1b1.check_validity(i._hard_constraints))
@@ -117,7 +119,7 @@ struct Genetic {
     }
   }
 
-  inline void next_generation(instance i) {
+  void next_generation(instance i) {
     std::vector<solution> good_sols = std::vector<solution>();
     std::vector<solution> elite_sols = std::vector<solution>();
     ul good_limit = this->sols.size() / 4;
@@ -149,7 +151,7 @@ struct Genetic {
       this->sols.emplace(elite_sols[a]);
   }
 
-  inline void solve(instance i) {
+  inline solution solve(instance i) {
     bool (*compare)(const solution &, const solution &) =
         [](const solution &a, const solution &b) {
           if (std::round(a._value * 10000.0L) / 10000.0L >
@@ -169,13 +171,14 @@ struct Genetic {
       temp.evaluation(), temp.calc_soft_value(i._hard_constraints);
       best_it_sols.push(temp);
     }
-    while(best_it_sols.top()._value <= 0.0L || best_it_sols.top()._soft_value <= 0.0L)
+    while (best_it_sols.top()._value <= 0.0L ||
+           best_it_sols.top()._soft_value <= 0.0L)
       best_it_sols.pop();
-    if(best_it_sols.empty()){
+    if (best_it_sols.empty()) {
       printf("There was a problem.\n"), exit(EXIT_FAILURE);
     }
-    best_it_sols.top().print(false);
+    return best_it_sols.top();
   }
 };
 
-#endif
+#endif // COMPUTER_H

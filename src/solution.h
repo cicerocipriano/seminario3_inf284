@@ -13,14 +13,16 @@ struct change {
 
 struct solution {
   inline solution()
-      : _mean(0.0L), _variance(0.0L), _std_deviation(0.0L), _value(0.0L), _soft_value(0.0L){};
+      : _mean(0.0L), _variance(0.0L), _std_deviation(0.0L), _value(0.0L),
+        _soft_value(0.0L){};
 
   inline ~solution(){};
 
   inline void print(const bool verbose) const {
     if (verbose)
-      for (std::pair<ul, computer> i : this->_computers)
+      for (std::pair<ul, computer> i : this->_computers) {
         i.second.print();
+      }
     printf("Number of computers: %lu\nMean: %.5Lf\nVariance: %.5Lf\nStandard "
            "Deviation: %.5Lf\nSolution Value: %.5Lf\nSoft Value: %.5Lf\n",
            this->_computers.size(), this->_mean, this->_variance,
@@ -165,8 +167,9 @@ struct solution {
 
   inline ld calc_soft_value(std::unordered_map<ul, ul> &hard_constraints) {
     std::vector<ld> vec(this->_computers.size());
-    for (std::pair<ul, computer> i : this->_computers)
+    for (std::pair<ul, computer> i : this->_computers) {
       vec[i.first] = i.second.calc_cd(hard_constraints);
+    }
     ld sum = 0.0L, mean, variance;
     for (ld i : vec)
       sum += i;

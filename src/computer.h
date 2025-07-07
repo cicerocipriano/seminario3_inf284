@@ -9,7 +9,8 @@ using ld = long double;
 struct computer {
   inline computer() : _events_sum(0){};
 
-  inline computer(const ul n_exchanges) : _events_sum(0), _events_sum_square(0), _computer_distribution(0.0L) {
+  inline computer(const ul n_exchanges)
+      : _events_sum(0), _events_sum_square(0), _computer_distribution(0.0L) {
     this->_constraint_count.resize(n_exchanges, 0);
   };
 
@@ -19,7 +20,7 @@ struct computer {
     for (const market &i : this->_markets)
       i.print();
     printf("Sum of events: %lu\nNumber of markets: %lu\nComputer Distribution: "
-           "%lu\n",
+           "%.5lF\n",
            this->_events_sum, this->_markets.size(),
            this->_computer_distribution);
   };
@@ -45,14 +46,15 @@ struct computer {
   };
 
   inline ld calc_cd(std::unordered_map<ul, ul> &hard_constraints) {
-    std::vector<ul> vec(this->_constraint_count.size());
-    for (std::pair<ul, ul> i : hard_constraints)
+    std::vector<ld> vec(this->_constraint_count.size());
+    for (std::pair<ul, ul> i : hard_constraints) {
       vec[i.first] = (100.0L * this->_constraint_count[i.first]) / i.second;
+    }
     ld sum = 0.0L, mean, variance;
-    for (ul i : vec)
+    for (ld i : vec)
       sum += i;
     mean = sum / vec.size(), sum = 0.0L;
-    for (ul i : vec)
+    for (ld i : vec)
       sum += pow(i - mean, 2);
     variance = sum / vec.size();
     this->_computer_distribution = sqrt(variance);

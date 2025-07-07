@@ -1,3 +1,6 @@
+#ifndef ALGORITHMS_H
+#define ALGORITHMS_H
+
 #include "computer.h"
 #include "instance.h"
 #include "solution.h"
@@ -140,7 +143,7 @@ inline void reconstruct_greedy(solution &sol, instance &inst) {
         break;
       }
     }
-    if (!found){
+    if (!found) {
       sol = extra;
       return;
     }
@@ -164,23 +167,10 @@ inline void local_search(solution &sol) {
 };
 
 inline void iterated_greedy(instance &inst, solution &sol) {
-  bool (*compare)(const solution &, const solution &) = [](const solution &a,
-                                                           const solution &b) {
-    if (std::round(a._value * 10000.0L) / 10000.0L >
-        std::round(b._value * 10000.0L) / 10000.0L)
-      return true;
-    else if (std::round(a._value * 10000.0L) / 10000.0L <
-             std::round(b._value * 10000.0L) / 10000.0L)
-      return false;
-    else
-      return a._soft_value < b._soft_value;
-  };
-  std::priority_queue<solution, std::vector<solution>, decltype(compare)>
-      solutions(compare);
+  std::vector<solution> v;
   ul best_value = std::numeric_limits<ul>::max(), idx = 0;
   initial_greedy(inst, sol);
   sol.calc_soft_value(inst._hard_constraints);
-  solutions.push(sol);
   for (ul j = 0; j < ITERATIONS; j++) {
     do {
       for (ul i = 0; i < ITERATIONS_ITERATED_GREEDY; ++i)
@@ -188,9 +178,23 @@ inline void iterated_greedy(instance &inst, solution &sol) {
       local_search(sol);
     } while (!sol.check_validity(inst._hard_constraints));
     sol.calc_soft_value(inst._hard_constraints);
-    solutions.push(sol);
+    v.push_back(sol);
   }
-
-  printf("Final solution:\n");
-  solutions.top().print(false);
+  sol = v[0];
+  if (v.size() > 1) {
+    best_value = std::round(sol._value * 10000.0L);
+    for (ul i = 1; i < v.size(); i++) {
+      if (std::round(v[i]._value * 10000.0L) / 10000.0L < best_value) {
+        best_value = v[i]._value;
+        sol = v[i];
+      }
+      if (std::round(v[i]._value * 10000.0L) == best_value) {
+        if (sol._soft_value < v[i]._soft_value) {
+          sol = v[i];
+        }
+      }
+    }
+  }
 };
+
+#endif // ALGORITHMS_H
